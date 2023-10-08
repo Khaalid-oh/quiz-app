@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+/* Custom radio button styling */
+input[type='radio']:checked {
+  background-color: black;
+}
+
+input[type='radio']:checked::before {
+  background-color: black;
+  border-color: black;
+}
+
