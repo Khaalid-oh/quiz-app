@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
+import Loader from "./Loader";
 
 //Link:https://quizapi.io/api/v1/questions
 //API Key:nqmyRZgetK3MX0FCo6DUCWEIs5UWHo3SpN62AxYb
@@ -33,7 +34,7 @@ function Quiz() {
       value: string;
       answer: QuizAttributes["answers"];
       id: QuizAttributes["id"];
-    } ;
+    };
   }>({
     stage: 0,
     selectedValue: {
@@ -117,7 +118,7 @@ function Quiz() {
   return (
     <div>
       {quiz.length === 0 ? (
-        <h1>loading...</h1>
+        <Loader/>
       ) : (
         <>
           <p className="text-xl text-center font-semibold w-[90%] p-4">
