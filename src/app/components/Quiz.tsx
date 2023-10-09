@@ -24,6 +24,7 @@ interface QuizAttributes {
 }
 
 function Quiz() {
+  const [isLoading, setIsLoading] = useState(true); 
   const [quiz, setQuiz] = useState<QuizAttributes[]>([]);
   const [quizAnswer, setQuizAnswer] = useState<
     { question: string; isCorrect: boolean; id: number }[]
@@ -46,6 +47,7 @@ function Quiz() {
 
   const fetchQuiz = async () => {
     try {
+      setIsLoading(true);
       const { data } = await axios.get<QuizAttributes[]>(
         "https://quizapi.io/api/v1/questions?apiKey=nqmyRZgetK3MX0FCo6DUCWEIs5UWHo3SpN62AxYb&limit=10"
       );
@@ -62,10 +64,17 @@ function Quiz() {
       );
 
       setQuiz([...quiz, ...cleanupData]);
+
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 5000);
     } catch (err) {
       console.log(err);
+      setIsLoading(false);
     }
   };
+
+  
 
   useEffect(() => {
     fetchQuiz();
@@ -117,7 +126,7 @@ function Quiz() {
   console.log(quizAnswer);
   return (
     <div>
-      {quiz.length === 0 ? (
+      {isLoading ? (
         <Loader/>
       ) : (
         <>
