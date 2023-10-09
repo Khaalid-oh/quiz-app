@@ -24,7 +24,6 @@ interface QuizAttributes {
 }
 
 function Quiz() {
-  const [isLoading, setIsLoading] = useState(true); 
   const [quiz, setQuiz] = useState<QuizAttributes[]>([]);
   const [quizAnswer, setQuizAnswer] = useState<
     { question: string; isCorrect: boolean; id: number }[]
@@ -47,7 +46,6 @@ function Quiz() {
 
   const fetchQuiz = async () => {
     try {
-      setIsLoading(true);
       const { data } = await axios.get<QuizAttributes[]>(
         "https://quizapi.io/api/v1/questions?apiKey=nqmyRZgetK3MX0FCo6DUCWEIs5UWHo3SpN62AxYb&limit=10"
       );
@@ -64,17 +62,10 @@ function Quiz() {
       );
 
       setQuiz([...quiz, ...cleanupData]);
-
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 5000);
     } catch (err) {
       console.log(err);
-      setIsLoading(false);
     }
   };
-
-  
 
   useEffect(() => {
     fetchQuiz();
@@ -85,8 +76,11 @@ function Quiz() {
     type: "keys" | "values" | "entries" = "values"
   ) => Object[type](obj);
 
-  const handleQuizAnswer = (answer: string, quiz: QuizAttributes) => {
-    const { answers, correct_answers, id, question } = quiz;
+  const handleQuizAnswer = (
+    answer: string,
+    currentQuestion: QuizAttributes
+  ) => {
+    const { answers, correct_answers, id, question } = currentQuestion;
 
     const answerMap = convertObjToArray(answers, "entries");
 
@@ -117,16 +111,23 @@ function Quiz() {
       },
     ]);
 
-    setQuizStage((prevState) => ({
-      ...prevState,
-      stage: prevState.stage + 1,
-    }));
+    if (quizStage.stage + 1 < quiz.length) {
+      setQuizStage((prevState) => ({
+        ...prevState,
+        stage: prevState.stage + 1,
+        selectedValue: {
+          ...prevState.selectedValue,
+          value: answer,
+        },
+      }));
+    }
   };
+
 
   console.log(quizAnswer);
   return (
     <div>
-      {isLoading ? (
+      {quiz.length === 0 ? (
         <Loader/>
       ) : (
         <>
